@@ -1,29 +1,11 @@
-repeat task.wait() until game:IsLoaded() and game.Players.LocalPlayer
-
--- THE KILL AURA SYSTEM
-task.spawn(function()
-    while task.wait() do
-        pcall(function()
-            local lp = game.Players.LocalPlayer
-            local tool = lp.Character:FindFirstChildOfClass("Tool")
-            
-            if tool then
-                for _, enemy in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
-                    if enemy:FindFirstChild("HumanoidRootPart") and enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0 then
-                        local distance = (enemy.HumanoidRootPart.Position - lp.Character.HumanoidRootPart.Position).magnitude
-                        if distance < 350 then -- Range of Kill Aura
-                            -- Direct Damage Execution
-                            game:GetService("ReplicatedStorage").Remotes.Validator:FireServer(math.huge)
-                            tool:Activate()
-                            enemy.HumanoidRootPart.CFrame = lp.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -5)
-                        end
-                    end
-                end
-            end
-        end)
+local function ExecuteScript()
+    local success, result = pcall(function()
+        loadstring(game:HttpGet("https://rawscripts.net/raw/V4-Blox-Loot-HOLDIK-HUB-57350"))()
+    end)
+    
+    if not success then
+        warn("Execution Error: " .. tostring(result))
     end
-end)
+end
 
--- EXECUTING MAIN BLOX LOOT HUB
-print("Kill Aura Initialized! The Boss is Dominating!")
-loadstring(game:HttpGet("https://rawscripts.net/raw/V4-Blox-Loot-DRX-HUB-no-key-and-the-BEST-57625"))()
+ExecuteScript()
