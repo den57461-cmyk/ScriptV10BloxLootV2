@@ -1,20 +1,24 @@
-_G.AutoFarm = true
+local Player = game.Players.LocalPlayer
+local Character = Player.Character or Player.CharacterAdded:Wait()
+local Root = Character:WaitForChild("HumanoidRootPart")
+
+_G.Active = true
 
 spawn(function()
-    while _G.AutoFarm do
-        task.wait()
+    while _G.Active do
+        task.wait(0.1)
         pcall(function()
-            for _, enemy in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
-                if enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0 then
+            -- Find enemies in Workspace
+            for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
+                if v:IsA("Model") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and v.Name ~= Player.Name then
                     repeat
                         task.wait()
-                        -- Stand on enemy's head (5 units above)
-                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = enemy.HumanoidRootPart.CFrame * CFrame.new(0, 5, 0) * CFrame.Angles(math.rad(-90), 0, 0)
+                        -- Forced TP above enemy head
+                        Root.CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, 6, 0)
                         
-                        -- Auto Attack execution
-                        game:GetService("VirtualUser"):CaptureController()
-                        game:GetService("VirtualUser"):Button1Down(Vector2.new(0,1e3), game.Workspace.CurrentCamera.CFrame)
-                    until not _G.AutoFarm or enemy.Humanoid.Health <= 0
+                        -- Infinite Attack
+                        game:GetService("VirtualUser"):Button1Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+                    until v.Humanoid.Health <= 0 or not _G.Active
                 end
             end
         end)
