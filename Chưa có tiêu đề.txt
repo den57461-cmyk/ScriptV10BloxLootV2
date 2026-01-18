@@ -1,26 +1,21 @@
-local Player = game.Players.LocalPlayer
-local Character = Player.Character or Player.CharacterAdded:Wait()
-local Root = Character:WaitForChild("HumanoidRootPart")
+local g = game
+local w = g.Workspace
+local l = g.Lighting
 
-_G.Active = true
+-- Optimization execution
+settings().Rendering.QualityLevel = "Level01"
+l.GlobalShadows = false
+l.FogEnd = 9e9
+w:WaitForChild("Terrain").WaterWaveSize = 0
+w.Terrain.WaterWaveSpeed = 0
 
-spawn(function()
-    while _G.Active do
-        task.wait(0.1)
-        pcall(function()
-            -- Find enemies in Workspace
-            for _, v in pairs(game:GetService("Workspace"):GetDescendants()) do
-                if v:IsA("Model") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and v.Name ~= Player.Name then
-                    repeat
-                        task.wait()
-                        -- Forced TP above enemy head
-                        Root.CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, 6, 0)
-                        
-                        -- Infinite Attack
-                        game:GetService("VirtualUser"):Button1Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
-                    until v.Humanoid.Health <= 0 or not _G.Active
-                end
-            end
-        end)
+for _, v in pairs(g:GetDescendants()) do
+    if v:IsA("Part") or v:IsA("MeshPart") or v:IsA("BasePart") then
+        v.Material = Enum.Material.SmoothPlastic
+        v.Reflectance = 0
+    elseif v:IsA("Decal") or v:IsA("Texture") then
+        v:Destroy()
+    elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+        v.Enabled = false
     end
-end)
+end
