@@ -1,11 +1,22 @@
-local function ExecuteScript()
-    local success, result = pcall(function()
-        loadstring(game:HttpGet("https://rawscripts.net/raw/V4-Blox-Loot-HOLDIK-HUB-57350"))()
-    end)
-    
-    if not success then
-        warn("Execution Error: " .. tostring(result))
-    end
-end
+_G.AutoFarm = true
 
-ExecuteScript()
+spawn(function()
+    while _G.AutoFarm do
+        task.wait()
+        pcall(function()
+            for _, enemy in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+                if enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0 then
+                    repeat
+                        task.wait()
+                        -- Stand on enemy's head (5 units above)
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = enemy.HumanoidRootPart.CFrame * CFrame.new(0, 5, 0) * CFrame.Angles(math.rad(-90), 0, 0)
+                        
+                        -- Auto Attack execution
+                        game:GetService("VirtualUser"):CaptureController()
+                        game:GetService("VirtualUser"):Button1Down(Vector2.new(0,1e3), game.Workspace.CurrentCamera.CFrame)
+                    until not _G.AutoFarm or enemy.Humanoid.Health <= 0
+                end
+            end
+        end)
+    end
+end)
