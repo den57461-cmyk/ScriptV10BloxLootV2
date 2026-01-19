@@ -1,21 +1,25 @@
-local g = game
-local w = g.Workspace
-local l = g.Lighting
+local lighting = game:GetService("Lighting")
+lighting.GlobalShadows = false
+lighting.FogEnd = 9e9
 
--- Optimization execution
-settings().Rendering.QualityLevel = "Level01"
-l.GlobalShadows = false
-l.FogEnd = 9e9
-w:WaitForChild("Terrain").WaterWaveSize = 0
-w.Terrain.WaterWaveSpeed = 0
-
-for _, v in pairs(g:GetDescendants()) do
-    if v:IsA("Part") or v:IsA("MeshPart") or v:IsA("BasePart") then
-        v.Material = Enum.Material.SmoothPlastic
-        v.Reflectance = 0
-    elseif v:IsA("Decal") or v:IsA("Texture") then
-        v:Destroy()
-    elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
-        v.Enabled = false
-    end
+for _, effect in pairs(lighting:GetChildren()) do
+    if effect:IsA("PostEffect") then effect.Enabled = false end
 end
+
+settings().Rendering.QualityLevel = 1
+
+-- PRO AUTO FARM SYSTEM
+_G.Active = true
+spawn(function()
+    while _G.Active and task.wait(0.1) do
+        pcall(function()
+            for _, target in pairs(game.Workspace.Enemies:GetChildren()) do
+                if target:FindFirstChild("Humanoid") and target.Humanoid.Health > 0 then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.HumanoidRootPart.CFrame * CFrame.new(0, 5, 0)
+                    local tool = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
+                    if tool then tool:Activate() end
+                end
+            end
+        end)
+    end
+end)
